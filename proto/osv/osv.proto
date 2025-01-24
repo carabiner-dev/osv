@@ -1,0 +1,48 @@
+// SPDX-License-Identifier: Apache-2.0
+// SPDX-FileCopyrightText: Copyright 2025 Carabiner Systems, Inc
+
+syntax = "proto3";
+
+package osv;
+option go_package = "github.com/carabiner-dev/osv/go/osv";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+
+import "v1.6.7.proto";
+
+// Results describes the OSV scanner format output
+message Results {
+    google.protobuf.Timestamp date = 1;
+    repeated Result results = 2;
+    // google.protobuf.Struct experimental_config = 3;
+}
+
+message Result {
+    Source source = 1;
+    repeated Package packages = 2;
+
+    message Package {
+        Info package = 1;
+        repeated osv.v1_6_7.Record vulnerabilities = 2;
+        repeated Group groups = 3;
+
+        message Info {
+            string name = 1;
+            string version = 2;
+            string ecosystem = 3;
+        }
+
+        message Group {
+            repeated string ids = 1;
+            repeated string aliases = 2;
+            string max_severity = 3;
+            google.protobuf.Struct experimentalAnalysis = 4;
+        }
+    }
+
+    message Source {
+        string path = 1;
+        string type = 2;
+    }
+}
