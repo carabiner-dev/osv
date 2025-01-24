@@ -1,0 +1,15 @@
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: Copyright 2025 Carabiner Systems, Inc
+---
+version: v2
+
+managed:
+  enabled: true
+plugins:
+  - protoc_builtin: go
+    out: ./go/osv
+    opt: 
+      - paths=import
+      - module=github.com/carabiner-dev/osv/go/osv
+inputs:
+  - directory: proto/osv
