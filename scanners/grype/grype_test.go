@@ -4,6 +4,7 @@
 package grype
 
 import (
+	"encoding/json"
 	"os"
 	"testing"
 
@@ -87,6 +88,41 @@ func TestToOSVDeterministic(t *testing.T) {
 	secondJSON, err := protojson.Marshal(second)
 	require.NoError(t, err)
 	require.JSONEq(t, string(firstJSON), string(secondJSON))
+}
+
+func TestParseError(t *testing.T) {
+	t.Parallel()
+	_, err := Parse([]byte("this is not json"))
+	require.Error(t, err)
+}
+
+func TestCVSSMethod(t *testing.T) {
+	t.Parallel()
+	require.Equal(t, v1.Severity_CVSS_V2, cvssMethod("2.0"))
+	require.Equal(t, v1.Severity_CVSS_V3, cvssMethod("3.0"))
+	require.Equal(t, v1.Severity_CVSS_V3, cvssMethod("3.1"))
+	require.Equal(t, v1.Severity_CVSS_V4, cvssMethod("4.0"))
+	// Unknown/empty versions default to V3.
+	require.Equal(t, v1.Severity_CVSS_V3, cvssMethod(""))
+}
+
+func TestSourceInfo(t *testing.T) {
+	t.Parallel()
+
+	// No source at all.
+	require.Nil(t, (&Document{}).sourceInfo())
+
+	// File source: the string target becomes the path.
+	fileDoc := &Document{Source: &Source{Type: "file", Target: json.RawMessage(`"go.mod"`)}}
+	fileSource := fileDoc.sourceInfo()
+	require.Equal(t, "file", fileSource.GetType())
+	require.Equal(t, "go.mod", fileSource.GetPath())
+
+	// Image source: the object target leaves the path empty.
+	imageDoc := &Document{Source: &Source{Type: "image", Target: json.RawMessage(`{"userInput":"alpine:3"}`)}}
+	imageSource := imageDoc.sourceInfo()
+	require.Equal(t, "image", imageSource.GetType())
+	require.Empty(t, imageSource.GetPath())
 }
 
 func findRecord(results *osv.Results, id string) *osv.Record {

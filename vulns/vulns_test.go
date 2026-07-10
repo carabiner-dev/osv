@@ -98,3 +98,25 @@ func TestFromResultsEmpty(t *testing.T) {
 	require.Empty(t, predicate.GetScanner().GetResult())
 	require.Nil(t, predicate.GetMetadata().GetScanStartedOn())
 }
+
+func TestRecordHelpersEmpty(t *testing.T) {
+	t.Parallel()
+
+	// No affected entries at all.
+	require.Empty(t, recordPURL(&osv.Record{}))
+	require.Empty(t, fixedVersion(&osv.Record{}))
+
+	// Affected present but with neither a purl nor a fixed event.
+	record := &osv.Record{
+		Affected: []*osv.Affected{
+			{
+				Package: &osv.Package{Name: "example"},
+				Ranges: []*osv.Range{
+					{Type: v1.Range_ECOSYSTEM, Events: []*osv.Range_Event{{Introduced: "0"}}},
+				},
+			},
+		},
+	}
+	require.Empty(t, recordPURL(record))
+	require.Empty(t, fixedVersion(record))
+}

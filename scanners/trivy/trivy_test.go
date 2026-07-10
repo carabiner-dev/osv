@@ -87,6 +87,66 @@ func TestToOSVDeterministic(t *testing.T) {
 	require.JSONEq(t, string(firstJSON), string(secondJSON))
 }
 
+func TestParseError(t *testing.T) {
+	t.Parallel()
+	_, err := Parse([]byte("this is not json"))
+	require.Error(t, err)
+}
+
+func TestToOSVCVSSVariants(t *testing.T) {
+	t.Parallel()
+	report := &Report{
+		Results: []Result{
+			{
+				Target: "app",
+				Class:  "lang-pkgs",
+				Type:   "gobinary",
+				Vulnerabilities: []Vulnerability{
+					{
+						VulnerabilityID:  "CVE-0000-0001",
+						PkgName:          "example",
+						InstalledVersion: "1.0.0",
+						CVSS: map[string]CVSS{
+							"nvd": {
+								V2Vector:  "AV:N/AC:L/Au:N/C:P/I:P/A:P",
+								V2Score:   7.5,
+								V40Vector: "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+								V40Score:  9.3,
+							},
+						},
+					},
+					{
+						VulnerabilityID:  "CVE-0000-0002",
+						PkgName:          "nocvss",
+						InstalledVersion: "2.0.0",
+					},
+				},
+			},
+		},
+	}
+
+	results, err := report.ToOSV()
+	require.NoError(t, err)
+
+	// The V2 and V4 vectors each become a severity of the matching method.
+	withCVSS := findRecord(results, "CVE-0000-0001")
+	require.NotNil(t, withCVSS)
+	methods := map[v1.Severity_Type]string{}
+	for _, sev := range withCVSS.GetSeverity() {
+		methods[sev.GetType()] = sev.GetScore()
+	}
+	require.Contains(t, methods, v1.Severity_CVSS_V4)
+	require.Contains(t, methods, v1.Severity_CVSS_V2)
+	require.Contains(t, withCVSS.GetDatabaseSpecific().AsMap(), "cvss")
+
+	// A vuln with no CVSS and no extra fields yields no severity and no
+	// database_specific blob.
+	noCVSS := findRecord(results, "CVE-0000-0002")
+	require.NotNil(t, noCVSS)
+	require.Empty(t, noCVSS.GetSeverity())
+	require.Nil(t, noCVSS.GetDatabaseSpecific())
+}
+
 func findRecord(results *osv.Results, id string) *osv.Record {
 	for _, res := range results.GetResults() {
 		for _, pkg := range res.GetPackages() {
