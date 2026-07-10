@@ -15,10 +15,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"sort"
-	"strings"
 	"time"
 
 	"github.com/carabiner-dev/osv/go/osv"
+	"github.com/carabiner-dev/osv/scanners/internal/purl"
 	"google.golang.org/protobuf/types/known/structpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -130,7 +130,7 @@ func (r *Report) ToOSV() (*osv.Results, error) {
 					Package: &osv.Result_Package_Info{
 						Name:      vuln.PkgName,
 						Version:   vuln.InstalledVersion,
-						Ecosystem: ecosystemFromPURL(vuln.PkgIdentifier.PURL, tr.Type),
+						Ecosystem: purl.Ecosystem(vuln.PkgIdentifier.PURL, tr.Type),
 					},
 				}
 				byPackage[key] = pkg
@@ -187,7 +187,7 @@ func vulnToRecord(vuln *Vulnerability, trivyType string) (*osv.Record, error) {
 		Package: &osv.Package{
 			Name:      vuln.PkgName,
 			Purl:      vuln.PkgIdentifier.PURL,
-			Ecosystem: ecosystemFromPURL(vuln.PkgIdentifier.PURL, trivyType),
+			Ecosystem: purl.Ecosystem(vuln.PkgIdentifier.PURL, trivyType),
 		},
 	}
 	if vuln.InstalledVersion != "" {
@@ -268,36 +268,4 @@ func sortedKeys(m map[string]CVSS) []string {
 	}
 	sort.Strings(keys)
 	return keys
-}
-
-// purlEcosystem maps a package URL type to the corresponding OSV ecosystem.
-var purlEcosystem = map[string]string{
-	"golang":   "Go",
-	"npm":      "npm",
-	"pypi":     "PyPI",
-	"maven":    "Maven",
-	"cargo":    "crates.io",
-	"gem":      "RubyGems",
-	"nuget":    "NuGet",
-	"composer": "Packagist",
-	"deb":      "Debian",
-	"apk":      "Alpine",
-	"hex":      "Hex",
-	"pub":      "Pub",
-	"conan":    "ConanCenter",
-}
-
-// ecosystemFromPURL derives the OSV ecosystem from a package URL, falling back
-// to the Trivy result type when the PURL type is unknown or absent.
-func ecosystemFromPURL(purl, fallback string) string {
-	if rest, ok := strings.CutPrefix(purl, "pkg:"); ok {
-		typ := rest
-		if i := strings.IndexAny(rest, "/@"); i >= 0 {
-			typ = rest[:i]
-		}
-		if eco, ok := purlEcosystem[strings.ToLower(typ)]; ok {
-			return eco
-		}
-	}
-	return fallback
 }
