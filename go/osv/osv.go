@@ -3,24 +3,24 @@
 
 package osv
 
-import "github.com/carabiner-dev/osv/go/osv/v1_6_7"
+import "github.com/carabiner-dev/osv/go/osv/v1"
 
 const (
-	Version = "v1.6.7"
+	Version = "v1"
 )
 
 // We maintain type aliases of the latest proto generated structures.
 // This ensures any new record gets generated with the latest revision
 // but keeps the older versions still available.
 type (
-	Affected    = v1_6_7.Affected
-	Award       = v1_6_7.Award
-	Credit      = v1_6_7.Credit
-	CWE         = v1_6_7.CWE
-	Range       = v1_6_7.Range
-	Range_Event = v1_6_7.Range_Event
-	Record      = v1_6_7.Record
-	Reference   = v1_6_7.Reference
-	Severity    = v1_6_7.Severity
-	Package     = v1_6_7.Package
+	Affected    = v1.Affected
+	Award       = v1.Award
+	Credit      = v1.Credit
+	CWE         = v1.CWE
+	Range       = v1.Range
+	Range_Event = v1.Range_Event
+	Record      = v1.Record
+	Reference   = v1.Reference
+	Severity    = v1.Severity
+	Package     = v1.Package
 )

@@ -9,7 +9,7 @@ option go_package = "github.com/carabiner-dev/osv/go/osv";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/struct.proto";
 
-import "v1.6.7.proto";
+import "v1.proto";
 
 // Results describes the OSV scanner format output
 message Results {
@@ -24,7 +24,7 @@ message Result {
 
     message Package {
         Info package = 1;
-        repeated osv.v1_6_7.Record vulnerabilities = 2;
+        repeated osv.v1.Record vulnerabilities = 2;
         repeated Group groups = 3;
 
         message Info {

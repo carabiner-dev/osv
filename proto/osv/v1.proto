@@ -1,14 +1,10 @@
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-FileCopyrightText: Copyright 2025 Carabiner Systems, Inc
 
-// This is the frozen OSV schema 1.6.7 record definition. It is retained for
-// backwards compatibility with consumers that import this package directly;
-// new code should use the osv.v1 package (or the aliases in the osv package).
-
 syntax = "proto3";
 
-package osv.v1_6_7;
-option go_package = "github.com/carabiner-dev/osv/go/osv/v1_6_7";
+package osv.v1;
+option go_package = "github.com/carabiner-dev/osv/go/osv/v1";
 
 import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
