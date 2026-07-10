@@ -13,9 +13,10 @@ package vulns
 import (
 	"fmt"
 
-	"github.com/carabiner-dev/osv/go/osv"
 	v02 "github.com/in-toto/attestation/go/predicates/vulns/v02"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	"github.com/carabiner-dev/osv/go/osv"
 )
 
 // FromResults projects an OSV results set onto a vulns/v0.2 predicate. The

@@ -4,7 +4,7 @@
 package osv
 
 import (
-	"github.com/carabiner-dev/osv/go/osv/v1"
+	v1 "github.com/carabiner-dev/osv/go/osv/v1"
 	"github.com/carabiner-dev/osv/go/osv/v1_6_7"
 )
 

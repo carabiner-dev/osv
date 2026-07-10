@@ -7,11 +7,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/carabiner-dev/osv/go/osv"
-	"github.com/carabiner-dev/osv/go/osv/v1"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/types/known/structpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
+
+	"github.com/carabiner-dev/osv/go/osv"
+	v1 "github.com/carabiner-dev/osv/go/osv/v1"
 )
 
 func sampleResults(t *testing.T) *osv.Results {

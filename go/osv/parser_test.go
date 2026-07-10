@@ -21,11 +21,11 @@ func TestParseRestultsFromStream(t *testing.T) {
 		{"osv-scanner-output", "testdata/osv-scnner-release.json", false, func(t *testing.T, res *Results) {
 			t.Helper()
 			require.NotNil(t, res)
-			require.Len(t, res.Results, 1)
-			require.Len(t, res.Results[0].Packages, 4)
-			require.Len(t, res.Results[0].Packages[0].Vulnerabilities, 4)
-			require.Len(t, res.Results[0].Packages[0].Vulnerabilities[0].Affected, 3)
-			require.Equal(t, "GHSA-r9px-m959-cxf4", res.Results[0].Packages[0].Vulnerabilities[0].Id)
+			require.Len(t, res.GetResults(), 1)
+			require.Len(t, res.GetResults()[0].GetPackages(), 4)
+			require.Len(t, res.GetResults()[0].GetPackages()[0].GetVulnerabilities(), 4)
+			require.Len(t, res.GetResults()[0].GetPackages()[0].GetVulnerabilities()[0].GetAffected(), 3)
+			require.Equal(t, "GHSA-r9px-m959-cxf4", res.GetResults()[0].GetPackages()[0].GetVulnerabilities()[0].GetId())
 		}},
 	} {
 		t.Run(tc.name, func(t *testing.T) {

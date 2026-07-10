@@ -7,10 +7,11 @@ import (
 	"os"
 	"testing"
 
-	"github.com/carabiner-dev/osv/go/osv"
-	"github.com/carabiner-dev/osv/go/osv/v1"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/encoding/protojson"
+
+	"github.com/carabiner-dev/osv/go/osv"
+	v1 "github.com/carabiner-dev/osv/go/osv/v1"
 )
 
 func TestToOSV(t *testing.T) {

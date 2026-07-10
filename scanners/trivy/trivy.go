@@ -17,11 +17,12 @@ import (
 	"sort"
 	"time"
 
-	"github.com/carabiner-dev/osv/go/osv"
-	"github.com/carabiner-dev/osv/go/osv/v1"
-	"github.com/carabiner-dev/osv/scanners/internal/purl"
 	"google.golang.org/protobuf/types/known/structpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
+
+	"github.com/carabiner-dev/osv/go/osv"
+	v1 "github.com/carabiner-dev/osv/go/osv/v1"
+	"github.com/carabiner-dev/osv/scanners/internal/purl"
 )
 
 // Report is the top level of a Trivy JSON report.
