@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/carabiner-dev/osv/go/osv"
+	"github.com/carabiner-dev/osv/go/osv/v1"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/types/known/structpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -35,13 +36,13 @@ func sampleResults(t *testing.T) *osv.Results {
 								Summary: "example vulnerability",
 								Aliases: []string{"CVE-2026-0001"},
 								Severity: []*osv.Severity{
-									{Type: "CVSS_V3", Score: "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"},
+									{Type: v1.Severity_CVSS_V3, Score: "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"},
 								},
 								Affected: []*osv.Affected{
 									{
 										Package: &osv.Package{Name: "github.com/example/pkg", Purl: "pkg:golang/github.com/example/pkg@1.2.0", Ecosystem: "Go"},
 										Ranges: []*osv.Range{
-											{Type: "ECOSYSTEM", Events: []*osv.Range_Event{{Introduced: "0"}, {Fixed: "1.3.0"}}},
+											{Type: v1.Range_ECOSYSTEM, Events: []*osv.Range_Event{{Introduced: "0"}, {Fixed: "1.3.0"}}},
 										},
 									},
 								},

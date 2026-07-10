@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/carabiner-dev/osv/go/osv"
+	"github.com/carabiner-dev/osv/go/osv/v1"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/encoding/protojson"
 )
@@ -43,7 +44,7 @@ func TestToOSV(t *testing.T) {
 	// Severities come from the vendor-keyed CVSS map (ghsa + redhat V3 vectors).
 	require.Len(t, record.GetSeverity(), 2)
 	for _, sev := range record.GetSeverity() {
-		require.Equal(t, "CVSS_V3", sev.GetType())
+		require.Equal(t, v1.Severity_CVSS_V3, sev.GetType())
 		require.Contains(t, sev.GetScore(), "CVSS:3.1/")
 	}
 

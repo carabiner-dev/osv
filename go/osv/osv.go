@@ -3,24 +3,31 @@
 
 package osv
 
-import "github.com/carabiner-dev/osv/go/osv/v1"
+import (
+	"github.com/carabiner-dev/osv/go/osv/v1"
+	"github.com/carabiner-dev/osv/go/osv/v1_6_7"
+)
 
 const (
 	Version = "v1"
 )
 
-// We maintain type aliases of the latest proto generated structures.
-// This ensures any new record gets generated with the latest revision
-// but keeps the older versions still available.
+// The osv package aliases point at the current OSV record definition (v1,
+// generated from the upstream ossf/osv-schema proto). The v1_6_7 package is
+// retained frozen for backwards compatibility.
 type (
 	Affected    = v1.Affected
-	Award       = v1.Award
 	Credit      = v1.Credit
-	CWE         = v1.CWE
+	Event       = v1.Event
 	Range       = v1.Range
-	Range_Event = v1.Range_Event
-	Record      = v1.Record
+	Range_Event = v1.Event
+	Record      = v1.Vulnerability
 	Reference   = v1.Reference
 	Severity    = v1.Severity
 	Package     = v1.Package
+
+	// CWE and Award are not part of the upstream OSV schema; they are retained
+	// from the frozen v1.6.7 definitions for backwards compatibility.
+	CWE   = v1_6_7.CWE
+	Award = v1_6_7.Award
 )

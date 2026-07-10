@@ -18,6 +18,7 @@ import (
 	"time"
 
 	"github.com/carabiner-dev/osv/go/osv"
+	"github.com/carabiner-dev/osv/go/osv/v1"
 	"github.com/carabiner-dev/osv/scanners/internal/purl"
 	"google.golang.org/protobuf/types/known/structpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -165,7 +166,7 @@ func vulnToRecord(vuln *Vulnerability, trivyType string) (*osv.Record, error) {
 	}
 
 	for _, url := range vuln.References {
-		record.References = append(record.References, &osv.Reference{Type: "WEB", Url: url})
+		record.References = append(record.References, &osv.Reference{Type: v1.Reference_WEB, Url: url})
 	}
 
 	// Emit a severity entry per vendor/method. Iterate vendors in sorted order
@@ -173,13 +174,13 @@ func vulnToRecord(vuln *Vulnerability, trivyType string) (*osv.Record, error) {
 	for _, vendor := range sortedKeys(vuln.CVSS) {
 		cvss := vuln.CVSS[vendor]
 		if cvss.V40Vector != "" {
-			record.Severity = append(record.Severity, &osv.Severity{Type: "CVSS_V4", Score: cvss.V40Vector})
+			record.Severity = append(record.Severity, &osv.Severity{Type: v1.Severity_CVSS_V4, Score: cvss.V40Vector})
 		}
 		if cvss.V3Vector != "" {
-			record.Severity = append(record.Severity, &osv.Severity{Type: "CVSS_V3", Score: cvss.V3Vector})
+			record.Severity = append(record.Severity, &osv.Severity{Type: v1.Severity_CVSS_V3, Score: cvss.V3Vector})
 		}
 		if cvss.V2Vector != "" {
-			record.Severity = append(record.Severity, &osv.Severity{Type: "CVSS_V2", Score: cvss.V2Vector})
+			record.Severity = append(record.Severity, &osv.Severity{Type: v1.Severity_CVSS_V2, Score: cvss.V2Vector})
 		}
 	}
 
@@ -199,7 +200,7 @@ func vulnToRecord(vuln *Vulnerability, trivyType string) (*osv.Record, error) {
 	if vuln.FixedVersion != "" {
 		events = append(events, &osv.Range_Event{Fixed: vuln.FixedVersion})
 	}
-	affected.Ranges = []*osv.Range{{Type: "ECOSYSTEM", Events: events}}
+	affected.Ranges = []*osv.Range{{Type: v1.Range_ECOSYSTEM, Events: events}}
 	record.Affected = []*osv.Affected{affected}
 
 	dbSpecific, err := databaseSpecific(vuln)

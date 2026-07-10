@@ -18,6 +18,7 @@ import (
 	"time"
 
 	"github.com/carabiner-dev/osv/go/osv"
+	"github.com/carabiner-dev/osv/go/osv/v1"
 	"github.com/carabiner-dev/osv/scanners/internal/purl"
 	"google.golang.org/protobuf/types/known/structpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -185,10 +186,10 @@ func matchToRecord(match *Match) (*osv.Record, error) {
 	}
 
 	if vuln.DataSource != "" {
-		record.References = append(record.References, &osv.Reference{Type: "ADVISORY", Url: vuln.DataSource})
+		record.References = append(record.References, &osv.Reference{Type: v1.Reference_ADVISORY, Url: vuln.DataSource})
 	}
 	for _, url := range vuln.URLs {
-		record.References = append(record.References, &osv.Reference{Type: "WEB", Url: url})
+		record.References = append(record.References, &osv.Reference{Type: v1.Reference_WEB, Url: url})
 	}
 
 	for i := range vuln.CVSS {
@@ -214,7 +215,7 @@ func matchToRecord(match *Match) (*osv.Record, error) {
 	if strings.EqualFold(vuln.Fix.State, "fixed") && len(vuln.Fix.Versions) > 0 {
 		events = append(events, &osv.Range_Event{Fixed: vuln.Fix.Versions[0]})
 	}
-	affected.Ranges = []*osv.Range{{Type: "ECOSYSTEM", Events: events}}
+	affected.Ranges = []*osv.Range{{Type: v1.Range_ECOSYSTEM, Events: events}}
 	record.Affected = []*osv.Affected{affected}
 
 	dbSpecific, err := databaseSpecific(vuln)
@@ -291,13 +292,13 @@ func (d *Document) sourceInfo() *osv.Result_Source {
 }
 
 // cvssMethod maps a CVSS version string to the OSV severity method.
-func cvssMethod(version string) string {
+func cvssMethod(version string) v1.Severity_Type {
 	switch {
 	case strings.HasPrefix(version, "4"):
-		return "CVSS_V4"
+		return v1.Severity_CVSS_V4
 	case strings.HasPrefix(version, "2"):
-		return "CVSS_V2"
+		return v1.Severity_CVSS_V2
 	default:
-		return "CVSS_V3"
+		return v1.Severity_CVSS_V3
 	}
 }

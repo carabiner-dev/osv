@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/carabiner-dev/osv/go/osv"
+	"github.com/carabiner-dev/osv/go/osv/v1"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/encoding/protojson"
 )
@@ -42,12 +43,12 @@ func TestToOSV(t *testing.T) {
 
 	// CVSS 3.1 vector becomes a CVSS_V3 severity.
 	require.Len(t, record.GetSeverity(), 1)
-	require.Equal(t, "CVSS_V3", record.GetSeverity()[0].GetType())
+	require.Equal(t, v1.Severity_CVSS_V3, record.GetSeverity()[0].GetType())
 	require.Contains(t, record.GetSeverity()[0].GetScore(), "CVSS:3.1/")
 
 	// Advisory + web references.
 	require.NotEmpty(t, record.GetReferences())
-	require.Equal(t, "ADVISORY", record.GetReferences()[0].GetType())
+	require.Equal(t, v1.Reference_ADVISORY, record.GetReferences()[0].GetType())
 
 	// Affected package + reconstructed range up to the fix.
 	require.Len(t, record.GetAffected(), 1)

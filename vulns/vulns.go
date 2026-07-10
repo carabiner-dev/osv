@@ -45,7 +45,7 @@ func FromResults(results *osv.Results, scannerURI string) (*v02.Vulns, error) {
 
 				for _, severity := range record.GetSeverity() {
 					vulnResult.Severity = append(vulnResult.Severity, &v02.Result_Severity{
-						Method: severity.GetType(),
+						Method: severity.GetType().String(),
 						Score:  severity.GetScore(),
 					})
 				}

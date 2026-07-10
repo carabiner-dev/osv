@@ -7,6 +7,10 @@
 // 	protoc        (unknown)
 // source: osv.proto
 
+// The wrapper lives in its own proto package so it can import the OSV record
+// definition (proto package "osv") without a package collision. The generated
+// Go package is unchanged (go/osv).
+
 package osv
 
 import (
@@ -135,7 +139,7 @@ func (x *Result) GetPackages() []*Result_Package {
 type Result_Package struct {
 	state           protoimpl.MessageState  `protogen:"open.v1"`
 	Package         *Result_Package_Info    `protobuf:"bytes,1,opt,name=package,proto3" json:"package,omitempty"`
-	Vulnerabilities []*v1.Record            `protobuf:"bytes,2,rep,name=vulnerabilities,proto3" json:"vulnerabilities,omitempty"`
+	Vulnerabilities []*v1.Vulnerability     `protobuf:"bytes,2,rep,name=vulnerabilities,proto3" json:"vulnerabilities,omitempty"`
 	Groups          []*Result_Package_Group `protobuf:"bytes,3,rep,name=groups,proto3" json:"groups,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
@@ -178,7 +182,7 @@ func (x *Result_Package) GetPackage() *Result_Package_Info {
 	return nil
 }
 
-func (x *Result_Package) GetVulnerabilities() []*v1.Record {
+func (x *Result_Package) GetVulnerabilities() []*v1.Vulnerability {
 	if x != nil {
 		return x.Vulnerabilities
 	}
@@ -376,17 +380,17 @@ var File_osv_proto protoreflect.FileDescriptor
 
 const file_osv_proto_rawDesc = "" +
 	"\n" +
-	"\tosv.proto\x12\x03osv\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1cgoogle/protobuf/struct.proto\x1a\bv1.proto\"`\n" +
+	"\tosv.proto\x12\vosv.results\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1cgoogle/protobuf/struct.proto\x1a\x16v1/vulnerability.proto\"h\n" +
 	"\aResults\x12.\n" +
-	"\x04date\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\x04date\x12%\n" +
-	"\aresults\x18\x02 \x03(\v2\v.osv.ResultR\aresults\"\xbe\x04\n" +
-	"\x06Result\x12*\n" +
-	"\x06source\x18\x01 \x01(\v2\x12.osv.Result.SourceR\x06source\x12/\n" +
-	"\bpackages\x18\x02 \x03(\v2\x13.osv.Result.PackageR\bpackages\x1a\xa4\x03\n" +
-	"\aPackage\x122\n" +
-	"\apackage\x18\x01 \x01(\v2\x18.osv.Result.Package.InfoR\apackage\x128\n" +
-	"\x0fvulnerabilities\x18\x02 \x03(\v2\x0e.osv.v1.RecordR\x0fvulnerabilities\x121\n" +
-	"\x06groups\x18\x03 \x03(\v2\x19.osv.Result.Package.GroupR\x06groups\x1aR\n" +
+	"\x04date\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\x04date\x12-\n" +
+	"\aresults\x18\x02 \x03(\v2\x13.osv.results.ResultR\aresults\"\xe2\x04\n" +
+	"\x06Result\x122\n" +
+	"\x06source\x18\x01 \x01(\v2\x1a.osv.results.Result.SourceR\x06source\x127\n" +
+	"\bpackages\x18\x02 \x03(\v2\x1b.osv.results.Result.PackageR\bpackages\x1a\xb8\x03\n" +
+	"\aPackage\x12:\n" +
+	"\apackage\x18\x01 \x01(\v2 .osv.results.Result.Package.InfoR\apackage\x12<\n" +
+	"\x0fvulnerabilities\x18\x02 \x03(\v2\x12.osv.VulnerabilityR\x0fvulnerabilities\x129\n" +
+	"\x06groups\x18\x03 \x03(\v2!.osv.results.Result.Package.GroupR\x06groups\x1aR\n" +
 	"\x04Info\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x18\n" +
 	"\aversion\x18\x02 \x01(\tR\aversion\x12\x1c\n" +
@@ -398,8 +402,8 @@ const file_osv_proto_rawDesc = "" +
 	"\x14experimentalAnalysis\x18\x04 \x01(\v2\x17.google.protobuf.StructR\x14experimentalAnalysis\x1a0\n" +
 	"\x06Source\x12\x12\n" +
 	"\x04path\x18\x01 \x01(\tR\x04path\x12\x12\n" +
-	"\x04type\x18\x02 \x01(\tR\x04typeBd\n" +
-	"\acom.osvB\bOsvProtoP\x01Z#github.com/carabiner-dev/osv/go/osv\xa2\x02\x03OXX\xaa\x02\x03Osv\xca\x02\x03Osv\xe2\x02\x0fOsv\\GPBMetadata\xea\x02\x03Osvb\x06proto3"
+	"\x04type\x18\x02 \x01(\tR\x04typeB\x8d\x01\n" +
+	"\x0fcom.osv.resultsB\bOsvProtoP\x01Z#github.com/carabiner-dev/osv/go/osv\xa2\x02\x03ORX\xaa\x02\vOsv.Results\xca\x02\vOsv\\Results\xe2\x02\x17Osv\\Results\\GPBMetadata\xea\x02\fOsv::Resultsb\x06proto3"
 
 var (
 	file_osv_proto_rawDescOnce sync.Once
@@ -415,25 +419,25 @@ func file_osv_proto_rawDescGZIP() []byte {
 
 var file_osv_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_osv_proto_goTypes = []any{
-	(*Results)(nil),               // 0: osv.Results
-	(*Result)(nil),                // 1: osv.Result
-	(*Result_Package)(nil),        // 2: osv.Result.Package
-	(*Result_Source)(nil),         // 3: osv.Result.Source
-	(*Result_Package_Info)(nil),   // 4: osv.Result.Package.Info
-	(*Result_Package_Group)(nil),  // 5: osv.Result.Package.Group
+	(*Results)(nil),               // 0: osv.results.Results
+	(*Result)(nil),                // 1: osv.results.Result
+	(*Result_Package)(nil),        // 2: osv.results.Result.Package
+	(*Result_Source)(nil),         // 3: osv.results.Result.Source
+	(*Result_Package_Info)(nil),   // 4: osv.results.Result.Package.Info
+	(*Result_Package_Group)(nil),  // 5: osv.results.Result.Package.Group
 	(*timestamppb.Timestamp)(nil), // 6: google.protobuf.Timestamp
-	(*v1.Record)(nil),             // 7: osv.v1.Record
+	(*v1.Vulnerability)(nil),      // 7: osv.Vulnerability
 	(*structpb.Struct)(nil),       // 8: google.protobuf.Struct
 }
 var file_osv_proto_depIdxs = []int32{
-	6, // 0: osv.Results.date:type_name -> google.protobuf.Timestamp
-	1, // 1: osv.Results.results:type_name -> osv.Result
-	3, // 2: osv.Result.source:type_name -> osv.Result.Source
-	2, // 3: osv.Result.packages:type_name -> osv.Result.Package
-	4, // 4: osv.Result.Package.package:type_name -> osv.Result.Package.Info
-	7, // 5: osv.Result.Package.vulnerabilities:type_name -> osv.v1.Record
-	5, // 6: osv.Result.Package.groups:type_name -> osv.Result.Package.Group
-	8, // 7: osv.Result.Package.Group.experimentalAnalysis:type_name -> google.protobuf.Struct
+	6, // 0: osv.results.Results.date:type_name -> google.protobuf.Timestamp
+	1, // 1: osv.results.Results.results:type_name -> osv.results.Result
+	3, // 2: osv.results.Result.source:type_name -> osv.results.Result.Source
+	2, // 3: osv.results.Result.packages:type_name -> osv.results.Result.Package
+	4, // 4: osv.results.Result.Package.package:type_name -> osv.results.Result.Package.Info
+	7, // 5: osv.results.Result.Package.vulnerabilities:type_name -> osv.Vulnerability
+	5, // 6: osv.results.Result.Package.groups:type_name -> osv.results.Result.Package.Group
+	8, // 7: osv.results.Result.Package.Group.experimentalAnalysis:type_name -> google.protobuf.Struct
 	8, // [8:8] is the sub-list for method output_type
 	8, // [8:8] is the sub-list for method input_type
 	8, // [8:8] is the sub-list for extension type_name
