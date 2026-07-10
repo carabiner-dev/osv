@@ -68,6 +68,49 @@ func TestToOSV(t *testing.T) {
 	require.Equal(t, "fixed", db["fix_state"])
 	require.Contains(t, db, "risk")
 	require.Contains(t, db, "cvss_scores")
+
+	// EPSS enrichment: the probability from the first EPSS record.
+	epss, ok := db["epss"].(float64)
+	require.True(t, ok, "epss should be a float64")
+	require.Greater(t, epss, 0.0)
+
+	// CWE enrichment: cwe_ids is populated from the second match's cwes list.
+	cweRecord := findRecord(results, "GHSA-hfvc-g4fc-pqhx")
+	require.NotNil(t, cweRecord, "expected GHSA-hfvc-g4fc-pqhx in the converted results")
+	require.Contains(t, cweRecord.GetDatabaseSpecific().AsMap()["cwe_ids"], "CWE-426")
+}
+
+func TestDatabaseSpecificEnrichment(t *testing.T) {
+	t.Parallel()
+
+	// knownExploited is absent from the committed testdata, so exercise all the
+	// enrichment fields together with a synthetic document.
+	doc := &Document{
+		Matches: []Match{{
+			Vulnerability: Vulnerability{
+				ID:             "CVE-2026-0001",
+				EPSS:           []EPSSScore{{CVE: "CVE-2026-0001", EPSS: 0.42, Percentile: 0.9}},
+				KnownExploited: []KnownExploited{{CVE: "CVE-2026-0001"}},
+				CWEs: []CWE{
+					{CVE: "CVE-2026-0001", CWE: "CWE-79"},
+					{CVE: "CVE-2026-0001", CWE: "CWE-89"},
+				},
+			},
+			Artifact: Artifact{Name: "acme", Version: "1.0.0"},
+		}},
+	}
+
+	results, err := doc.ToOSV()
+	require.NoError(t, err)
+
+	record := findRecord(results, "CVE-2026-0001")
+	require.NotNil(t, record)
+
+	db := record.GetDatabaseSpecific().AsMap()
+	require.Equal(t, true, db["known_exploited"])
+	require.InDelta(t, 0.42, db["epss"], 1e-9)
+	require.Contains(t, db["cwe_ids"], "CWE-79")
+	require.Contains(t, db["cwe_ids"], "CWE-89")
 }
 
 func TestToOSVDeterministic(t *testing.T) {

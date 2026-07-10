@@ -41,15 +41,39 @@ type Match struct {
 
 // Vulnerability is the primary matched vulnerability record.
 type Vulnerability struct {
-	ID          string   `json:"id"`
-	DataSource  string   `json:"dataSource"`
-	Namespace   string   `json:"namespace"`
-	Severity    string   `json:"severity"`
-	URLs        []string `json:"urls"`
-	Description string   `json:"description"`
-	CVSS        []CVSS   `json:"cvss"`
-	Fix         Fix      `json:"fix"`
-	Risk        float64  `json:"risk"`
+	ID             string           `json:"id"`
+	DataSource     string           `json:"dataSource"`
+	Namespace      string           `json:"namespace"`
+	Severity       string           `json:"severity"`
+	URLs           []string         `json:"urls"`
+	Description    string           `json:"description"`
+	CVSS           []CVSS           `json:"cvss"`
+	Fix            Fix              `json:"fix"`
+	Risk           float64          `json:"risk"`
+	EPSS           []EPSSScore      `json:"epss"`
+	KnownExploited []KnownExploited `json:"knownExploited"`
+	CWEs           []CWE            `json:"cwes"`
+}
+
+// EPSSScore is a single EPSS record for a vulnerability. EPSS holds the exploit
+// prediction probability (0..1) and Percentile its ranking among all scores.
+type EPSSScore struct {
+	CVE        string  `json:"cve"`
+	EPSS       float64 `json:"epss"`
+	Percentile float64 `json:"percentile"`
+}
+
+// KnownExploited flags a vulnerability as listed in a known-exploited catalog
+// (e.g. CISA KEV). Only its presence is consumed, so the entry is minimal.
+type KnownExploited struct {
+	CVE string `json:"cve"`
+}
+
+// CWE is a single weakness classification attached to a vulnerability. CWE
+// carries the identifier string (e.g. "CWE-426").
+type CWE struct {
+	CVE string `json:"cve"`
+	CWE string `json:"cwe"`
 }
 
 // RelatedVulnerability is an alias or closely related record (e.g. the CVE
@@ -266,6 +290,30 @@ func databaseSpecific(vuln *Vulnerability) (*structpb.Struct, error) {
 	}
 	if len(scores) > 0 {
 		fields["cvss_scores"] = scores
+	}
+
+	// Exploitability enrichment consumed by downstream policies. epss is always
+	// emitted (0 when grype supplied no score) so policies can rely on the key.
+	epss := 0.0
+	if len(vuln.EPSS) > 0 {
+		epss = vuln.EPSS[0].EPSS
+	}
+	fields["epss"] = epss
+
+	if len(vuln.KnownExploited) > 0 {
+		fields["known_exploited"] = true
+	}
+
+	if len(vuln.CWEs) > 0 {
+		cweIDs := make([]any, 0, len(vuln.CWEs))
+		for _, cwe := range vuln.CWEs {
+			if cwe.CWE != "" {
+				cweIDs = append(cweIDs, cwe.CWE)
+			}
+		}
+		if len(cweIDs) > 0 {
+			fields["cwe_ids"] = cweIDs
+		}
 	}
 
 	if len(fields) == 0 {
