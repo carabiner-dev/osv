@@ -13,7 +13,7 @@ const (
 )
 
 // The osv package aliases point at the current OSV record definition (v1,
-// generated from the upstream ossf/osv-schema proto). The v1_6_7 package is
+// which is the upstream ossf/osv-schema binding). The v1_6_7 package is
 // retained frozen for backwards compatibility.
 type (
 	Affected    = v1.Affected

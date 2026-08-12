@@ -12,7 +12,7 @@ option go_package = "github.com/carabiner-dev/osv/go/osv";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/struct.proto";
 
-import "v1/vulnerability.proto";
+import "vulnerability.proto";
 
 // Results describes the OSV scanner format output
 message Results {

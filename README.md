@@ -72,12 +72,28 @@ free to file an issue or open a PR if you need them.
 
 ## Regenerating the Code
 
-If you want to regenerate the code from the protocol definition, the
-repository has a buf configuration that takes care of storing and naming
-files.
+This repository generates code for the protos it owns — the results wrapper
+(`proto/osv/osv.proto`) and the frozen v1.6.7 record (`proto/osv/v1.6.7.proto`).
+The current OSV record definition is **not** generated here: `go/osv/v1` is a
+set of aliases for the upstream
+[`github.com/ossf/osv-schema/bindings/go`](https://github.com/ossf/osv-schema)
+module, and `proto/osv/vulnerability.proto` is a vendored copy kept purely as a
+`buf` import so `osv.proto` can reference `osv.Vulnerability`.
+
+That split is deliberate. Generating our own copy of the upstream record proto
+registers the same proto file and message names twice, and the global protobuf
+registry rejects the duplicate with a panic during initialization — any binary
+combining this module with a consumer of the upstream bindings (Google's OSV
+Scanner, among others) then fails to start.
+
 [Install the latest version of the `buf` CLI](https://buf.build/docs/installation/)
-and generate the libraries from the top of the repo:
+and regenerate — including refreshing the vendored import — with:
 
 ```
-buf generate
+hack/update-osv-proto.sh
 ```
+
+Bumping the OSV schema means bumping `OSV_SCHEMA_VERSION` in that script and the
+`github.com/ossf/osv-schema/bindings/go` requirement in `go.mod` together. Note
+that a plain `buf generate` is **not** equivalent: it would generate the vendored
+import as well and reintroduce the duplicate registration.

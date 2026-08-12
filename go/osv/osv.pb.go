@@ -14,7 +14,7 @@
 package osv
 
 import (
-	v1 "github.com/carabiner-dev/osv/go/osv/v1"
+	osvschema "github.com/ossf/osv-schema/bindings/go/osvschema"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	structpb "google.golang.org/protobuf/types/known/structpb"
@@ -137,10 +137,10 @@ func (x *Result) GetPackages() []*Result_Package {
 }
 
 type Result_Package struct {
-	state           protoimpl.MessageState  `protogen:"open.v1"`
-	Package         *Result_Package_Info    `protobuf:"bytes,1,opt,name=package,proto3" json:"package,omitempty"`
-	Vulnerabilities []*v1.Vulnerability     `protobuf:"bytes,2,rep,name=vulnerabilities,proto3" json:"vulnerabilities,omitempty"`
-	Groups          []*Result_Package_Group `protobuf:"bytes,3,rep,name=groups,proto3" json:"groups,omitempty"`
+	state           protoimpl.MessageState     `protogen:"open.v1"`
+	Package         *Result_Package_Info       `protobuf:"bytes,1,opt,name=package,proto3" json:"package,omitempty"`
+	Vulnerabilities []*osvschema.Vulnerability `protobuf:"bytes,2,rep,name=vulnerabilities,proto3" json:"vulnerabilities,omitempty"`
+	Groups          []*Result_Package_Group    `protobuf:"bytes,3,rep,name=groups,proto3" json:"groups,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -182,7 +182,7 @@ func (x *Result_Package) GetPackage() *Result_Package_Info {
 	return nil
 }
 
-func (x *Result_Package) GetVulnerabilities() []*v1.Vulnerability {
+func (x *Result_Package) GetVulnerabilities() []*osvschema.Vulnerability {
 	if x != nil {
 		return x.Vulnerabilities
 	}
@@ -380,7 +380,7 @@ var File_osv_proto protoreflect.FileDescriptor
 
 const file_osv_proto_rawDesc = "" +
 	"\n" +
-	"\tosv.proto\x12\vosv.results\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1cgoogle/protobuf/struct.proto\x1a\x16v1/vulnerability.proto\"h\n" +
+	"\tosv.proto\x12\vosv.results\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1cgoogle/protobuf/struct.proto\x1a\x13vulnerability.proto\"h\n" +
 	"\aResults\x12.\n" +
 	"\x04date\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\x04date\x12-\n" +
 	"\aresults\x18\x02 \x03(\v2\x13.osv.results.ResultR\aresults\"\xe2\x04\n" +
@@ -419,15 +419,15 @@ func file_osv_proto_rawDescGZIP() []byte {
 
 var file_osv_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_osv_proto_goTypes = []any{
-	(*Results)(nil),               // 0: osv.results.Results
-	(*Result)(nil),                // 1: osv.results.Result
-	(*Result_Package)(nil),        // 2: osv.results.Result.Package
-	(*Result_Source)(nil),         // 3: osv.results.Result.Source
-	(*Result_Package_Info)(nil),   // 4: osv.results.Result.Package.Info
-	(*Result_Package_Group)(nil),  // 5: osv.results.Result.Package.Group
-	(*timestamppb.Timestamp)(nil), // 6: google.protobuf.Timestamp
-	(*v1.Vulnerability)(nil),      // 7: osv.Vulnerability
-	(*structpb.Struct)(nil),       // 8: google.protobuf.Struct
+	(*Results)(nil),                 // 0: osv.results.Results
+	(*Result)(nil),                  // 1: osv.results.Result
+	(*Result_Package)(nil),          // 2: osv.results.Result.Package
+	(*Result_Source)(nil),           // 3: osv.results.Result.Source
+	(*Result_Package_Info)(nil),     // 4: osv.results.Result.Package.Info
+	(*Result_Package_Group)(nil),    // 5: osv.results.Result.Package.Group
+	(*timestamppb.Timestamp)(nil),   // 6: google.protobuf.Timestamp
+	(*osvschema.Vulnerability)(nil), // 7: osv.Vulnerability
+	(*structpb.Struct)(nil),         // 8: google.protobuf.Struct
 }
 var file_osv_proto_depIdxs = []int32{
 	6, // 0: osv.results.Results.date:type_name -> google.protobuf.Timestamp
